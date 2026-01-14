@@ -1,7 +1,8 @@
 
 <script setup>
+import { info } from 'sass'
 import { ref, watch, computed } from 'vue'
-import { GMapMap, GMapMarker, GMapInfoWindow } from 'vue3-google-map'
+import { GoogleMap, AdvancedMarker, InfoWindow } from 'vue3-google-map'
 
 const props = defineProps({
   apiKey: String,
@@ -32,27 +33,26 @@ watch(() => props.items, fitBounds)
 </script>
 
 <template>
-  <GMapMap
+  <GoogleMap
+    api-key="AIzaSyBdOS8kOcnVjCVpsIrqbVyyFmM2eB9n4FA"
+    map-id="map1"
     :center="center"
-    :zoom="zoom"
-    style="width: 100%; height: 500px"
-    :options="{ mapTypeId: 'roadmap' }"
-    @bounds_changed="fitBounds"
+    :zoom="12"
+    style="width: 100%; height: 100%"
   >
-    <GMapMarker
-      v-for="(item, idx) in items"
-      :key="idx"
-      :position="{ lat: item.Latitude, lng: item.Longitude }"
-      @click="openInfoWindow(idx)"
-    />
-    <GMapInfoWindow
-      v-if="infoWindowIdx !== null"
-      :options="{ pixelOffset: { width: 0, height: -30 } }"
-      :position="{ lat: items[infoWindowIdx].Latitude, lng: items[infoWindowIdx].Longitude }"
-      @closeclick="infoWindowIdx = null"
-    >
-      <div>{{ items[infoWindowIdx].Name }}</div>
-    </GMapInfoWindow>
-  </GMapMap>
+
+    <AdvancedMarker 
+      v-for="(item, idx) in props.items" :key="idx" :options="{ position: { lat: item.Latitude, lng: item.Longitude } }">
+      <InfoWindow>
+        <div id="content">
+          <div id="siteNotice"></div>
+          <h1 class="font-bold text-lg mb-2">{{ item.title }}</h1>
+          <div class="text-md max-w-60">
+            {{ item.content }}
+          </div>
+        </div>
+      </InfoWindow>
+    </AdvancedMarker>/>
+  </GoogleMap>
 </template>
 

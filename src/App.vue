@@ -11,11 +11,11 @@ const baseLat = 45.5416 // Brescia
 const baseLng = 10.2118
 
 const items = Array.from({ length: 5 }, (_, i) => ({
-  Name: `Punto ${i + 1}`,
+  title: `Punto ${i + 1}`,
+  content: `Contenuto descrittivo del punto ${i + 1}`,
   Latitude: randomCoord(baseLat),
   Longitude: randomCoord(baseLng)
 }))
-console.log(items)
 </script>
 
 <template>

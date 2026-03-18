@@ -17,7 +17,7 @@ const fitBounds = () => {
   if (!props.items.length) return
   const bounds = new window.google.maps.LatLngBounds()
   props.items.forEach(item => {
-    bounds.extend(new window.google.maps.LatLng(item.Latitude, item.Longitude))
+    bounds.extend(new window.google.maps.LatLng(item.latitude, item.longitude))
   })
   const map = document.querySelector('.gmap-map')?.__vue__?.$mapObject
   if (map) {
@@ -42,7 +42,7 @@ watch(() => props.items, fitBounds)
   >
 
     <AdvancedMarker 
-      v-for="(item, idx) in props.items" :key="idx" :options="{ position: { lat: item.Latitude, lng: item.Longitude } }">
+      v-for="(item, idx) in props.items" :key="idx" :options="{ position: { lat: item.latitude, lng: item.longitude } }">
       <InfoWindow>
         <div id="content">
           <div id="siteNotice"></div>

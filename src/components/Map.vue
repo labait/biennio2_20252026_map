@@ -1,17 +1,16 @@
 
 <script setup>
-import { info } from 'sass'
-import { ref, watch, computed } from 'vue'
+import { ref, watch } from 'vue'
 import { GoogleMap, AdvancedMarker, InfoWindow } from 'vue3-google-map'
 
 const props = defineProps({
-  apiKey: String,
-  items: Array
+  items: {
+    type: Array,
+    default: () => []
+  }
 })
 
-const infoWindowIdx = ref(null)
 const center = ref({ lat: 45.5416, lng: 10.2118 }) // Brescia
-const zoom = ref(12)
 
 const fitBounds = () => {
   if (!props.items.length) return
@@ -25,11 +24,7 @@ const fitBounds = () => {
   }
 }
 
-const openInfoWindow = idx => {
-  infoWindowIdx.value = idx
-}
-
-watch(() => props.items, fitBounds)
+watch(() => props.items, fitBounds, { deep: true })
 </script>
 
 <template>
@@ -41,18 +36,21 @@ watch(() => props.items, fitBounds)
     style="width: 100%; height: 100%"
   >
 
-    <AdvancedMarker 
-      v-for="(item, idx) in props.items" :key="idx" :options="{ position: { lat: item.latitude, lng: item.longitude } }">
+    <AdvancedMarker
+      v-for="(item, idx) in props.items"
+      :key="item.id || idx"
+      :options="{ position: { lat: Number(item.latitude), lng: Number(item.longitude) } }"
+    >
       <InfoWindow>
         <div id="content">
           <div id="siteNotice"></div>
-          <h1 class="font-bold text-lg mb-2">{{ item.title }}</h1>
+          <h1 class="font-bold text-lg mb-2">{{ item.name || item.title || 'Item' }}</h1>
           <div class="text-md max-w-60">
-            {{ item.content }}
+            {{ item.content || '' }}
           </div>
         </div>
       </InfoWindow>
-    </AdvancedMarker>/>
+    </AdvancedMarker>
   </GoogleMap>
 </template>
 

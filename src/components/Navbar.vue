@@ -1,58 +1,21 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
-import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
-import { doc, setDoc } from 'firebase/firestore'
-import { auth, db, googleProvider } from '../firebase'
+import { onMounted } from 'vue'
+import { RouterLink } from 'vue-router'
+import { useCurrentAccount } from '../composables/useCurrentAccount'
 
-const currentUser = ref(null)
-let unsubscribeAuth = null
-
-const connectWithGoogle = async () => {
-  if (currentUser.value) return
-
-  try {
-    const result = await signInWithPopup(auth, googleProvider)
-    currentUser.value = result.user
-    console.log('Utente connesso:', result.user)
-
-    await setDoc(doc(db, 'accounts', result.user.uid), {
-      uid: result.user.uid,
-      roles: []
-    })
-    console.log('Account creato in Firestore')
-  } catch (error) {
-    console.error('Errore durante il login con Google:', error)
-  }
-}
-
-const logout = async () => {
-  try {
-    await signOut(auth)
-    currentUser.value = null
-    console.log('Utente disconnesso')
-  } catch (error) {
-    console.error('Errore durante il logout:', error)
-  }
-}
+const { currentUser, connectWithGoogle, logout, initAuth } = useCurrentAccount()
 
 onMounted(() => {
-  unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-    currentUser.value = user
-  })
-})
-
-onUnmounted(() => {
-  if (unsubscribeAuth) {
-    unsubscribeAuth()
-  }
+  initAuth()
 })
 </script>
 
 <template>
   <header class="z-20 w-full" >
-    <div class="flex items-center justify-between p-3">
-      <div class="text-2xl">
-        map
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <RouterLink to="/" class="text-2xl font-semibold hover:underline">App</RouterLink>
+        <RouterLink to="/items" class="text-blue-600 hover:underline">items</RouterLink>
       </div>
 
       <div>

@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, setDoc, doc } from 'firebase/firestore'
 import Map from './components/Map.vue'
 import { auth, db, googleProvider } from './firebase'
 
@@ -45,6 +45,13 @@ const connectWithGoogle = async () => {
     const result = await signInWithPopup(auth, googleProvider)
     currentUser.value = result.user
     console.log('Utente connesso:', result.user)
+    
+    // Crea documento nella collezione accounts
+    await setDoc(doc(db, 'accounts', result.user.uid), {
+      uid: result.user.uid,
+      roles: []
+    })
+    console.log('Account creato in Firestore')
   } catch (error) {
     console.error('Errore durante il login con Google:', error)
   }
